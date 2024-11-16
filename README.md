@@ -29,15 +29,14 @@ This Docker image uses the `az` CLI and `bicep` CLI to lint your Bicep files and
 3. Create Docker Image: Build the Docker image with the following command:
 
   ```bash
-  docker build -t bicep-api-scanner .
+  podman build -t bicep-api-scanner .
   ```
 ## Running locally
 
 Run the Docker container with your Bicep files mounted:
   ```bash
-  docker run --rm \
-  -e AZURE_ACCESS_TOKEN="$AZURE_ACCESS_TOKEN" \
-  -v /path/to/your/bicep/files:/workspace \
+    podman run -it \
+  -v ./biceptestfiles:/workspace \
   bicep-api-scanner
   ```
 This will lint your Bicep files for outdated API versions based on the bicepconfig.json configuration.
@@ -49,7 +48,7 @@ az login --service-principal -u <app-id> -p <secret> --tenant <tenant-id>
 ```
 Run the Scanner: In your pipeline, run the container to lint the Bicep files:
 ```bash
-    docker run --rm \
+    podman run --rm \
       -e AZURE_ACCESS_TOKEN="$AZURE_ACCESS_TOKEN" \
       -v $(pwd)/bicep:/workspace \
       bicep-api-scanner
