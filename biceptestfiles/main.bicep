@@ -48,4 +48,3 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2019-07-01' = {
     }
   }
 }
-
