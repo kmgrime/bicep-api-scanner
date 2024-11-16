@@ -1,9 +1,22 @@
 # Use an official Azure CLI image as the base
-FROM mcr.microsoft.com/azure-cli:latest
+FROM mcr.microsoft.com/azure-cli:2.66.0-amd64
+
+# Install dependencies (curl, libicu)
+RUN tdnf install -y \
+    curl \
+    libicu
 
 # Install Bicep CLI
-RUN curl -Lo /usr/local/bin/bicep https://github.com/Azure/bicep/releases/download/v0.16.3/bicep-linux-x64 && \
-    chmod +x /usr/local/bin/bicep
+RUN curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+
+# Mark it as executable
+RUN chmod +x ./bicep
+
+# Add bicep to your PATH (requires admin)
+RUN mv ./bicep /usr/local/bin/bicep
+
+# Verify you can now access the 'bicep' command
+RUN bicep --version
 
 # Set working directory for the application
 WORKDIR /workspace
@@ -17,5 +30,6 @@ ENV BICEP_CONFIG_PATH=/workspace/bicepconfig.json
 # Ensure Azure CLI is authenticated via environment variable or az login
 ENV AZURE_ACCESS_TOKEN ""
 
-# Set up a default entrypoint (this can be overridden in CI/CD)
-ENTRYPOINT ["bash", "-c", "az bicep build --file /workspace/*.bicep --config /workspace/bicepconfig.json"]
+# Default command to run the Bicep linter
+ENTRYPOINT ["bash", "-c", "az bicep lint --file /workspace/*.bicep"]
+
