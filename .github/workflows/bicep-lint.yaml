@@ -1,0 +1,43 @@
+name: Bicep API Linting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  bicep-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      # Build the Docker image for the scanner
+      - name: Build Bicep Linting Image
+        run: |
+          docker build -t bicep-api-scanner .
+
+      # Run the Bicep Linter
+      - name: Run Bicep Linter
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/bicep-files:/workspace" \
+            bicep-api-scanner
+
+      # Upload linting results (optional)
+      - name: Save Results
+        if: always()
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/lint-results
+          docker run --rm \
+            -v "${{ github.workspace }}/bicep-files:/workspace" \
+            bicep-api-scanner > $GITHUB_WORKSPACE/lint-results/lint-output.txt
