@@ -24,7 +24,7 @@ This Docker image uses the `az` CLI and `bicep` CLI to lint your Bicep files and
    {
      "use-recent-api-versions": {
        "level": "warning",
-       "maxAllowedAgeInDays": 0
+       "maxAllowedAgeInDays": 365
      }
    }
    ```
