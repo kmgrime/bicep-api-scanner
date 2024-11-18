@@ -49,24 +49,28 @@ This will lint your Bicep files for outdated API versions based on the bicepconf
 
 ## Running in CI/CD Pipeline
 
-Authenticate Azure CLI: Ensure that the pipeline authenticates to Azure (e.g., using a service principal):
+To run the scanner on your own bicep files just change the path in the pipeline to your respective bicep file path.
 
-```bash
-az login --service-principal -u <app-id> -p <secret> --tenant <tenant-id>
-```
-
-Run the Scanner: In your pipeline, run the container to lint the Bicep files:
-
-```bash
-    podman run --rm \
-      -e AZURE_ACCESS_TOKEN="$AZURE_ACCESS_TOKEN" \
-      -v $(pwd)/bicep:/workspace \
+```yaml
+# Run the Bicep Linter
+- name: Run Bicep Linter
+  run: |
+    docker run --rm \
+      -v "${{ github.workspace }}/biceptestfiles:/workspace" \
       bicep-api-scanner
+
+# Upload linting results (optional)
+- name: Save Results
+  if: always()
+  run: |
+    mkdir -p $GITHUB_WORKSPACE/lint-results
+    docker run --rm \
+      -v "${{ github.workspace }}/biceptestfiles:/workspace" \
+      bicep-api-scanner > $GITHUB_WORKSPACE/lint-results/lint-output.txt
 ```
 
 ## Configuration
 
 You can modify bicepconfig.json to change how the API version checks are handled. For example:
-
-    Set maxAllowedAgeInDays to allow older API versions.
-    Change the level to error to enforce recent API versions.
+Set maxAllowedAgeInDays to allow older API versions.
+Change the level to error to enforce recent API versions.
