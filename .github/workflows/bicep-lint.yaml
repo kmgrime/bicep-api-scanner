@@ -30,7 +30,7 @@ jobs:
       - name: Run Bicep Linter
         run: |
           docker run --rm \
-            -v "${{ github.workspace }}/bicep-files:/workspace" \
+            -v "${{ github.workspace }}/biceptestfiles:/workspace" \
             bicep-api-scanner
 
       # Upload linting results (optional)
@@ -39,5 +39,5 @@ jobs:
         run: |
           mkdir -p $GITHUB_WORKSPACE/lint-results
           docker run --rm \
-            -v "${{ github.workspace }}/bicep-files:/workspace" \
+            -v "${{ github.workspace }}/biceptestfiles:/workspace" \
             bicep-api-scanner > $GITHUB_WORKSPACE/lint-results/lint-output.txt
