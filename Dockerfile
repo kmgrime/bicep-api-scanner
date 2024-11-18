@@ -22,14 +22,15 @@ RUN bicep --version
 WORKDIR /workspace
 
 # Copy the Bicep config file into the image
-COPY bicepconfig.json /workspace/bicepconfig.json
+COPY bicepconfig.json /bicepconfig.json
 
 # Set the Bicep configuration path
-ENV BICEP_CONFIG_PATH=/workspace/bicepconfig.json
+ENV BICEP_CONFIG_PATH="/bicepconfig.json"
 
 # Ensure Azure CLI is authenticated via environment variable or az login
 ENV AZURE_ACCESS_TOKEN ""
 
 # Default command to run the Bicep linter
-ENTRYPOINT ["bash", "-c", "az bicep lint --file /workspace/*.bicep"]
+ENTRYPOINT ["bash"]
+CMD ["-c", "az bicep lint --file /workspace/*.bicep"]
 
